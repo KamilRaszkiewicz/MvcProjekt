@@ -95,7 +95,6 @@ namespace MvcProject.Application.Helpers
                 {
                     var current = queue.Dequeue();
 
-
                     if (!current.IsRoot)
                         action(current.Value);
 
