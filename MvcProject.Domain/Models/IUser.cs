@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
-using MvcProject.Domain;
-using MvcProject.Domain.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MvcProject.Infrastructure.Identity
+namespace MvcProject.Domain.Models
 {
-    public class ApplicationUser : IdentityUser<int>, IUser
+    public interface IUser
     {
+        public int Id { get; }
+        public string Email { get; }
         public bool IsVerified { get; set; }
-
         public DateTime CreatedAt { get; set; }
 
         public IList<Search> Searches { get; set; }

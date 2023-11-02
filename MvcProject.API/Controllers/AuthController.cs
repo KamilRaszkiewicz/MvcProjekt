@@ -13,8 +13,9 @@ namespace MvcProject.API.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : ControllerBase
+    public class AuthController : ApiController
     {
+        private readonly static CookieOptions _httpOnlyCookie = new CookieOptions { HttpOnly = true};
         private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
 
@@ -36,6 +37,8 @@ namespace MvcProject.API.Controllers
             if (!result.IsSuccessful)
                 return Unauthorized(new { result.Errors });
 
+            Response.Cookies.Append("Authorization", "Bearer " + result.Token, _httpOnlyCookie);
+
             return Ok(new { result.Token });
         }
 
@@ -48,6 +51,8 @@ namespace MvcProject.API.Controllers
             if (!result.IsSuccessful)
                 return BadRequest(result.Errors);
 
+            Response.Cookies.Append("Authorization", "Bearer " + result.Token, _httpOnlyCookie);
+
             return Ok( new { result.Token });
         }
 
@@ -56,6 +61,8 @@ namespace MvcProject.API.Controllers
         [HttpPost("test")]
         public async Task<IActionResult> Test()
         {
+            var userContext = UserContext;
+
             return Ok("hui");
         }
     }

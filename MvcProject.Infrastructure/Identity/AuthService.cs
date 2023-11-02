@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
 using MvcProject.Domain;
+using MvcProject.Domain.Enums;
 using MvcProject.Infrastructure.Options;
 using System;
 using System.Collections;
@@ -89,7 +90,14 @@ namespace MvcProject.Infrastructure.Identity
                 var expiryDate = DateTime.Now.AddSeconds(_jwtOptions.ValidForSeconds);
 
                 result.IsSuccessful = identityResult.Succeeded;
-                result.Errors = identityResult.Errors.Select(x => x.Description);
+
+                if (!result.IsSuccessful)
+                {
+                    result.Errors = identityResult.Errors.Select(x => x.Description);
+
+                    return result;
+                }
+
                 result.Token = await CreateJwtTokenAsync(user, expiryDate);
                 result.ExpiresAt = expiryDate;
             } 
