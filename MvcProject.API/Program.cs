@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MvcProject.Application.Interfaces;
+using MvcProject.Infrastructure;
 using MvcProject.Infrastructure.Database;
 using MvcProject.Infrastructure.Identity;
 using MvcProject.Infrastructure.Options;
@@ -78,7 +79,7 @@ namespace MvcProject.API
                 builder.Configuration.GetSection("JwtOptions")
                 );
 
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddInfrastructureServices();
 
             var app = builder.Build();
 

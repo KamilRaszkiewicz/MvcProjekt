@@ -5,8 +5,13 @@ using Microsoft.Extensions.Logging;
 using MvcProject.Application.Dto.Category;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Helpers;
+using MvcProject.Application.Interfaces;
 using MvcProject.Infrastructure.Database;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MvcProject.API.Controllers
@@ -15,33 +20,33 @@ namespace MvcProject.API.Controllers
     [Route("api/category")]
     public class CategoryController: ApiController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ApplicationDbContext context, ILogger<CategoryController> logger)
+        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
-            _context = context;
+            _categoryService = categoryService;
             _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpPost("getTree")]
-        public async Task<IActionResult> GetTree()
+        public async Task<ActionResult<ICollection<CategoryTreeDto>>> GetTree()
         {
-            var categories = _context.Category
-                .Include(x => x.ParentCategory)
-                .ToTree(x => x.ParentCategory)
-                .ToPoco<CategoryTreeDto>((item, children) => new CategoryTreeDto
-                {
-                    Id = item == null ? null : item.Id,
-                    Name = item == null ? null : item.Name,
-                    Children = children,
-                }).Children;
+            ICollection<CategoryTreeDto> tree;
 
+            try
+            {
+                tree = _categoryService.GetCategoryTree();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Exception caught in {0}: {1}", nameof(GetTree), e);
 
+                return StatusCode(500);
+            }
 
-            return Ok(categories);
+            return Ok(tree);
         }
-
     }
 }
