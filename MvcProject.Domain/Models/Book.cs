@@ -10,7 +10,8 @@ namespace MvcProject.Domain.Models
     {
         public string Title { get; set; }
         public string ISBN { get; set; }
-        public string Description { get; set; }
+        public string DescriptionShort { get; set; }
+        public string DescriptionLong { get; set; }
 
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
