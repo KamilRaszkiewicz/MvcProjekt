@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MvcProject.Application.Dto.Category
 {
-    public class CategoryTreeDto
+    public class CategoryTreeResponse
     {
         public int? Id { get; set; }
         public string? Name { get; set; }
-        public ICollection<CategoryTreeDto> Children { get; set; }
+        public ICollection<CategoryTreeResponse> Children { get; set; }
     }
 }

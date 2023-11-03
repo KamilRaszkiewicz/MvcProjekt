@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MvcProject.Domain.Models
+namespace MvcProject.Application.Dto.Book.SubDtos
 {
-    public class Contents: BaseEntity
+    public class BookInfoContent
     {
+        public int Id { get; set; }
         public int Page { get; set; }
         public string Content { get; set; }
     }

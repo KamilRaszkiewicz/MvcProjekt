@@ -2,6 +2,7 @@
 using MvcProject.Application.Dto.Category;
 using MvcProject.Application.Helpers;
 using MvcProject.Application.Interfaces;
+using MvcProject.Domain.Models;
 using MvcProject.Infrastructure.Database;
 using System;
 using System.Collections.Generic;
@@ -13,19 +14,20 @@ namespace MvcProject.Infrastructure.Services
 {
     internal class CategoryService : ICategoryService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Category> _repository;
 
-        public CategoryService(ApplicationDbContext context)
+        public CategoryService(IRepository<Category> repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
-        public ICollection<CategoryTreeDto> GetCategoryTree()
+        public ICollection<CategoryTreeResponse> GetCategoryTree()
         {
-            return _context.Category
+            return _repository
+                .GetAll()
                 .Include(x => x.ParentCategory)
                 .ToTree(x => x.ParentCategory)
-                .ToPoco<CategoryTreeDto>((item, children) => new CategoryTreeDto
+                .ToPoco<CategoryTreeResponse>((item, children) => new CategoryTreeResponse
                 {
                     Id = item == null ? null : item.Id,
                     Name = item == null ? null : item.Name,

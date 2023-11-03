@@ -9,6 +9,6 @@ namespace MvcProject.Application.Interfaces
 {
     public interface ICategoryService
     {
-        ICollection<CategoryTreeDto> GetCategoryTree();
+        ICollection<CategoryTreeResponse> GetCategoryTree();
     }
 }

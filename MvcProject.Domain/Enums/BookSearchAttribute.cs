@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MvcProject.Domain.Enums
 {
-    public enum BookAttributes
+    public enum BookSearchAttribute
     {
-        Name,
+        Title,
         ISBN,
         Author,
     }

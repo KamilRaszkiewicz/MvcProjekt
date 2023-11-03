@@ -11,11 +11,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MvcProject.Application.Interfaces;
-using MvcProject.Infrastructure;
 using MvcProject.Infrastructure.Database;
+using MvcProject.Infrastructure.Extensions;
 using MvcProject.Infrastructure.Identity;
 using MvcProject.Infrastructure.Options;
+using System.IO;
+using System.Reflection;
+using System;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace MvcProject.API
 {
@@ -27,15 +31,24 @@ namespace MvcProject.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opts =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                opts.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                opts.UseInlineDefinitionsForEnums();
+            });
 
             var jwtSecrets = builder.Configuration.GetSection("JwtOptions");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                  options.UseSqlServer(builder.Configuration["ConnectionString"]));
+
+            builder.Services.AddOptions<PaginationOptions>();
 
             builder.Services.AddAuthentication(options =>
                 {

@@ -31,9 +31,9 @@ namespace MvcProject.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("getTree")]
-        public async Task<ActionResult<ICollection<CategoryTreeDto>>> GetTree()
+        public ActionResult<ICollection<CategoryTreeResponse>> GetTree()
         {
-            ICollection<CategoryTreeDto> tree;
+            ICollection<CategoryTreeResponse> tree;
 
             try
             {

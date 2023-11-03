@@ -11,6 +11,6 @@ namespace MvcProject.Domain.Models
     {
         public string Query { get; set; }
         public DateTime SearchedAt { get; set; }
-        public BookAttributes SearchAttribute { get; set; }
+        public BookSearchAttribute SearchAttribute { get; set; }
     }
 }

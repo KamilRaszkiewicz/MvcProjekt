@@ -12,9 +12,11 @@ namespace MvcProject.Domain.Models
         public string ISBN { get; set; }
         public string DescriptionShort { get; set; }
         public string DescriptionLong { get; set; }
+        public string CoverImageFileName { get; set; }
 
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? ReleasedAt { get; set; }
 
         public IList<Contents> TableOfContents { get; set; }
         public IList<Author> Authors { get; set; }
