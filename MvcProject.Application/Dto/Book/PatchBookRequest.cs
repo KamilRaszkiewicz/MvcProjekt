@@ -9,6 +9,7 @@ namespace MvcProject.Application.Dto.Book
 {
     public class PatchBookRequest
     {
+        public int Id { get; set; }
         public string? Title { get; set; }
         public string? ISBN { get; set; }
         public string? DescriptionShort { get; set; }
@@ -24,7 +25,7 @@ namespace MvcProject.Application.Dto.Book
     public class PatchBookContentsRequest
     {
         public int? ContentsId { get; set; }
-        public int? Page { get; set; }
-        public string? Content { get; set; }
+        public int Page { get; set; }
+        public string Content { get; set; }
     }
 }

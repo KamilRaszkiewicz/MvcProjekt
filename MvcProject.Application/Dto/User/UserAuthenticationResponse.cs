@@ -12,5 +12,6 @@ namespace MvcProject.Application.Dto.User
         public IEnumerable<string> Errors { get; set; }
         public string? Token { get; set; }
         public DateTime? ExpiresAt { get; set; }
+        public IList<string>? Roles { get; set; }
     }
 }
