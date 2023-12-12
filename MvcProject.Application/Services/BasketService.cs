@@ -1,4 +1,6 @@
 ﻿using MvcProject.Application.Dto;
+using MvcProject.Application.Dto.Book;
+using MvcProject.Application.Dto.Book.SubDtos;
 using MvcProject.Application.Interfaces;
 using MvcProject.Domain.Models;
 using System;
@@ -71,6 +73,59 @@ namespace MvcProject.Application.Services
                 }, ct);
             }
             catch (Exception e)
+            {
+                result.Status = -1;
+            }
+
+            return result;
+        }
+
+        public List<GetBookShortResponse> GetBasket(int usersId)
+        {
+            return _booksRepository
+                .GetAll(x => x.Category, x => x.Authors)
+                .Where(x => x.Baskets.Any(y => y.UsersId == usersId))
+                .Select(x => new GetBookShortResponse
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    ShortDescription = x.DescriptionShort,
+                    CoverUrl = "/img/" + x.CoverImageFileName,
+
+                    Category = new BookInfoCategory
+                    {
+                        Id = x.Category.Id,
+                        Name = x.Category.Name,
+                    },
+
+                    Authors = x.Authors.Select(a => new BookInfoAuthor
+                    {
+                        Id = a.Id,
+                        DisplayName = a.Name + " " + a.LastName
+                    })
+                }).ToList();
+        }
+
+        public BaseResponse DeleteFromBasketAsync(List<int>? idsToDelete, int usersId, CancellationToken ct)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                if (idsToDelete == null)
+                {
+                    _basketRepository.DeleteRangeAsync(
+                        ct, _basketRepository.GetAll().Where(x => x.UsersId == usersId).ToArray()
+                        );
+                }
+                else if (idsToDelete.Any())
+                {
+                    _basketRepository.DeleteRangeAsync(
+                        ct, _basketRepository.GetAll().Where(x => x.UsersId == usersId && idsToDelete.Contains(x.BooksId)).ToArray()
+                        );
+                }
+            }
+            catch(Exception e)
             {
                 result.Status = -1;
             }

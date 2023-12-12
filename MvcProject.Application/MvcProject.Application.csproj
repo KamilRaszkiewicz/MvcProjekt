@@ -14,4 +14,8 @@
     <ProjectReference Include="..\MvcProject.Domain\MvcProject.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dto\Basket\" />
+  </ItemGroup>
+
 </Project>

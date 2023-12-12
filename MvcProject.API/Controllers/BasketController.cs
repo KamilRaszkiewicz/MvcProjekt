@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcProject.Application.Dto;
+using MvcProject.Application.Dto.Book;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
 using System.Collections.Generic;
@@ -27,6 +28,9 @@ namespace MvcProject.API.Controllers
         }
 
 
+        /// <summary>
+        /// Adds book to basket
+        /// </summary>
         [HttpPost("")]
         [Authorize(Roles = "VerifiedUser")]
         public async Task<BaseResponse> AddToBasket([FromBody] int Id, CancellationToken ct)
@@ -44,11 +48,24 @@ namespace MvcProject.API.Controllers
             return res;
         }
 
+        /// <summary>
+        /// Returns books from basket in short format
+        /// </summary>
         [HttpGet("")]
         [Authorize(Roles = "VerifiedUser")]
-        public async Task<BaseResponse> GetBasket(CancellationToken ct)
+        public List<GetBookShortResponse> GetBasket()
         {
-            var res = await _basketService.AddToBasketAsync(Id, (int)UserContext.Id!, ct);
+            return _basketService.GetBasket((int)UserContext.Id!);
+        }
+
+        /// <summary>
+        /// Removes list of items from basket. If list not passed, clears whole basket.
+        /// </summary>
+        [HttpDelete("")]
+        [Authorize(Roles = "VerifiedUser")]
+        public async Task<BaseResponse> DeleteFromBasket([FromBody] List<int>? idsToDelete, CancellationToken ct)
+        {
+            var res = _basketService.DeleteFromBasketAsync(idsToDelete, (int)UserContext.Id, ct);
 
             if (res.Status != 0)
             {

@@ -26,6 +26,9 @@ namespace MvcProject.API.Controllers
             _borrowingService = borrowingService;
         }
 
+        /// <summary>
+        /// Borrows all books from basket (if books are available)
+        /// </summary>
         [HttpPost("borrowBasket")]
         [Authorize(Roles = "VerifiedUser")]
         public async Task<BaseResponse> BorrowBasket(CancellationToken ct)
@@ -43,6 +46,9 @@ namespace MvcProject.API.Controllers
             return res;
         }
 
+        /// <summary>
+        /// Returns a books
+        /// </summary>
         [HttpPost("returnBook")]
         [Authorize(Roles = "VerifiedUser")]
         public async Task<BaseResponse> ReturnBook([FromBody] List<int> bookIds, CancellationToken ct)

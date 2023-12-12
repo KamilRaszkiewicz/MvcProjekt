@@ -29,6 +29,10 @@ namespace MvcProject.API.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Gets category tree
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("getTree")]
         public ActionResult<ICollection<CategoryTreeResponse>> GetTree()
