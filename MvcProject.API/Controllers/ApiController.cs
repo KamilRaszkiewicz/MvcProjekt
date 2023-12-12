@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MvcProject.Infrastructure.Identity;
 
 namespace MvcProject.API.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public abstract class ApiController : ControllerBase
     {
         public UserContext UserContext => GetUserContext();
@@ -29,9 +31,9 @@ namespace MvcProject.API.Controllers
 
             return new UserContext()
             {
-                Id = currentUser.Result.Id,
-                Email = currentUser.Result.Email,
-                IsVerified = currentUser.Result.IsVerified
+                Id = currentUser.Result?.Id,
+                Email = currentUser.Result?.Email,
+                IsVerified = currentUser.Result?.IsVerified
             };
         }
     }

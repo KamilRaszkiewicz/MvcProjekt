@@ -12,11 +12,8 @@ namespace MvcProject.Application.Interfaces
     {
         IQueryable<T> GetAll(params Expression<Func<T, object>>[] includes);
         IQueryable<T> GetAll();
-
-        Task<T?> GetByIdAsync(int id, CancellationToken ct, params Expression<Func<T, object>>[] includes);
-        Task<T?> GetByIdAsync(int id, CancellationToken ct);
-        Task<int> AddAsync(T entity, CancellationToken ct);
-        Task<IEnumerable<int>> AddRangeAsync(CancellationToken ct, params T[] entity);
+        Task AddAsync(T entity, CancellationToken ct);
+        Task AddRangeAsync(CancellationToken ct, params T[] entity);
         Task UpdateAsync(T entity, CancellationToken ct);
         Task UpdateRangeAsync(CancellationToken ct, params T[] entity);
         Task DeleteAsync(CancellationToken ct, T entity);

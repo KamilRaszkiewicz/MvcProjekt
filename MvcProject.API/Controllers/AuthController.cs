@@ -6,6 +6,7 @@ using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ namespace MvcProject.API.Controllers
                 return Unauthorized(new { result.Errors });
 
             Response.Cookies.Append("Authorization", "Bearer " + result.Token, _httpOnlyCookie);
+            Response.Cookies.Append("Roles", JsonSerializer.Serialize(result.Roles));
 
             return Ok(new { result.Token });
         }
@@ -52,12 +54,13 @@ namespace MvcProject.API.Controllers
                 return BadRequest(result.Errors);
 
             Response.Cookies.Append("Authorization", "Bearer " + result.Token, _httpOnlyCookie);
+            Response.Cookies.Append("Roles", JsonSerializer.Serialize(result.Roles));
 
             return Ok( new { result.Token });
         }
 
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("test")]
         public async Task<IActionResult> Test()
         {

@@ -9,6 +9,7 @@ namespace MvcProject.Domain.Models
 {
     public class Search: BaseEntity
     {
+        public int ApplicationUserId { get; set; }
         public string Query { get; set; }
         public DateTime SearchedAt { get; set; }
         public BookSearchAttribute SearchAttribute { get; set; }

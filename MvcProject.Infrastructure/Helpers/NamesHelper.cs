@@ -15,7 +15,7 @@ namespace MvcProject.Infrastructure.Extensions
 
             Random.Shared.NextBytes(buff);
 
-            return DateTime.Now.ToShortDateString() + "_" + Convert.ToHexString(buff);
+            return DateTime.Now.ToString("dd_MM_yy") + "_" + Convert.ToHexString(buff);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace MvcProject.Application.Helpers
 
             public TResult ToPoco<TResult>(Func<T, ICollection<TResult>, TResult> selector)
             {
-                List<TResult> childPocoNodes = new List<TResult>();
+                var childPocoNodes = new List<TResult>();
 
                 foreach (var child in this.Children)
                 {
@@ -108,7 +108,7 @@ namespace MvcProject.Application.Helpers
         {
             var lookup = sequence.ToLookup(x => parentSelector(x));
 
-            var root = new Tree<T>(lookup.Count == 1 ? lookup.First().Key : default(T));
+            var root = new Tree<T>(lookup.Count == 1 ? lookup.First().Key : default);
 
             var queue = new Queue<Tree<T>>();
             queue.Enqueue(root);

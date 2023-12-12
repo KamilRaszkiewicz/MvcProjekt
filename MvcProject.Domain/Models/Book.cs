@@ -18,8 +18,11 @@ namespace MvcProject.Domain.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? ReleasedAt { get; set; }
 
-        public IList<Contents> TableOfContents { get; set; }
-        public IList<Author> Authors { get; set; }
+        public virtual IList<Contents> TableOfContents { get; set; }
+        public virtual IList<Author> Authors { get; set; }
+        public virtual IList<BookBorrowing> Borrowings { get; set; }
+        public virtual IList<BookBasket> Baskets { get; set; }
+        public virtual IList<Wish> Wishes { get; set; }
 
         public Category Category { get; set; }
         public int CategoryId { get; set; }

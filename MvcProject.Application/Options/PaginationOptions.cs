@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MvcProject.Infrastructure.Options
+namespace MvcProject.Application.Options
 {
     public class PaginationOptions
     {

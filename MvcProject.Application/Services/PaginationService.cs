@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
-using MvcProject.Infrastructure.Interfaces;
-using MvcProject.Infrastructure.Options;
+using MvcProject.Application.Interfaces;
+using MvcProject.Application.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MvcProject.Infrastructure.Services
+namespace MvcProject.Application.Services
 {
     internal class PaginationService : IPaginationService
     {

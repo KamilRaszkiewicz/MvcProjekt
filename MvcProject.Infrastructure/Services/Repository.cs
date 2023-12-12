@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace MvcProject.Infrastructure.Services
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    internal class Repository<T> : IRepository<T> where T: class
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _set;
@@ -23,21 +23,17 @@ namespace MvcProject.Infrastructure.Services
             _context = context;
             _set = _context.Set<T>();
         }
-        public async Task<int> AddAsync(T entity, CancellationToken ct)
+        public async Task AddAsync(T entity, CancellationToken ct)
         {
             _set.Add(entity);
             await _context.SaveChangesAsync(ct);
-
-            return entity.Id;
         }
 
-        public async Task<IEnumerable<int>> AddRangeAsync(CancellationToken ct, params T[] entity)
+        public async Task AddRangeAsync(CancellationToken ct, params T[] entity)
         {
             _set.AddRange(entity);
 
             await _context.SaveChangesAsync();
-
-            return entity.Select(x => x.Id).ToArray();
         }
 
         public async Task DeleteAsync(CancellationToken ct, T entity)
@@ -64,22 +60,6 @@ namespace MvcProject.Infrastructure.Services
             var beginning = _set.Include(firstInclude);
 
             return includes.Skip(1).Aggregate(beginning, (acc, include) => acc.Include(include));
-        }
-
-        public async Task<T?> GetByIdAsync(int id, CancellationToken ct)
-        {
-            return await _set.FirstOrDefaultAsync(x => x.Id == id, ct);
-        }
-
-        public async Task<T?> GetByIdAsync(int id, CancellationToken ct, params Expression<Func<T, object>>[] includes)
-        {
-            var firstInclude = includes.First();
-            var beginning = _set.Include(x => firstInclude);
-
-            return await includes
-                .Skip(1)
-                .Aggregate(beginning, (acc, include) => acc.Include(x => include))
-                .FirstOrDefaultAsync(x => x.Id == id, ct);
         }
 
         public async Task UpdateAsync(T entity, CancellationToken ct)

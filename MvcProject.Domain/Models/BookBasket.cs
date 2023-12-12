@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MvcProject.Domain.Models
 {
-    public class BookBasket: BaseEntity
+    public class BookBasket
     {
         public IUser User { get; set; }
         public int UsersId { get; set; }

@@ -33,8 +33,12 @@ namespace MvcProject.Infrastructure.Database
                 .HasForeignKey(x => x.UsersId)
                 .HasPrincipalKey(x => x.Id);
 
+            builder.Entity<Wish>().HasKey(x => new { x.UsersId, x.BooksId });
             builder.Entity<Wish>()
-                .HasOne(x => x.Book);
+                .HasOne(x => x.Book)
+                .WithMany(x => x.Wishes)
+                .HasForeignKey(x => x.BooksId)
+                .HasPrincipalKey(x => x.Id);
 
             builder.Entity<ApplicationUser>()
                 .HasMany(x => x.Borrowings)
@@ -42,13 +46,32 @@ namespace MvcProject.Infrastructure.Database
                 .HasForeignKey(x => x.UsersId)
                 .HasPrincipalKey(x => x.Id);
 
-            builder.Entity<ApplicationUser>()
-                .HasMany(x => x.Basket)
-                .WithOne(x => (ApplicationUser)x.User)
+            builder.Entity<BookBasket>().HasKey(x => new { x.UsersId, x.BooksId });
+
+            builder.Entity<BookBasket>()
+                .HasOne(x => (ApplicationUser)x.User)
+                .WithMany(x => x.Basket)
                 .HasForeignKey(x => x.UsersId)
                 .HasPrincipalKey(x => x.Id);
 
-            builder.Entity<Wish>().HasKey(x => new { x.UsersId, x.BooksId });
+            builder.Entity<BookBasket>()
+                .HasOne(x => x.Book)
+                .WithMany(x => x.Baskets)
+                .HasForeignKey(x => x.BooksId)
+                .HasPrincipalKey(x => x.Id);
+
+
+            builder.Entity<BookBorrowing>()
+                .HasOne(x => x.Book)
+                .WithMany(x => x.Borrowings)
+                .HasForeignKey(x => x.BooksId)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Entity<Book>()
+                .HasMany(x => x.TableOfContents)
+                .WithOne()
+                .HasForeignKey(x => x.BooksId)
+                .HasPrincipalKey(x => x.Id);
         }
     }
 }

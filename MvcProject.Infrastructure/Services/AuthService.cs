@@ -4,23 +4,19 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
-using MvcProject.Domain;
-using MvcProject.Domain.Enums;
-using MvcProject.Infrastructure.Options;
+using MvcProject.Application.Options;
+using MvcProject.Infrastructure.Identity;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvcProject.Infrastructure.Identity
+namespace MvcProject.Infrastructure.Services
 {
-    public class AuthService : IAuthService
+    internal class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -61,11 +57,12 @@ namespace MvcProject.Infrastructure.Identity
                 result.IsSuccessful = true;
                 result.ExpiresAt = expiryDate;
                 result.Token = await CreateJwtTokenAsync(user, expiryDate);
-                    
+                result.Roles = await _userManager.GetRolesAsync(user);
+
             }
             catch (Exception ex)
             {
-                _logger.LogError("Exception thrown in {0}, Exception: {1}", nameof(LoginAsync), ex);
+                _logger.LogError("Exception thrown in {method}, Exception: {ex}", nameof(LoginAsync), ex);
 
                 result.IsSuccessful = false;
             }
@@ -100,10 +97,12 @@ namespace MvcProject.Infrastructure.Identity
 
                 result.Token = await CreateJwtTokenAsync(user, expiryDate);
                 result.ExpiresAt = expiryDate;
-            } 
-            catch(Exception ex)
+                result.Roles = await _userManager.GetRolesAsync(user);
+
+            }
+            catch (Exception ex)
             {
-                _logger.LogError("Exception thrown in {0}, Exception: {1}", nameof(RegisterAsync), ex);
+                _logger.LogError("Exception thrown in {method}, Exception: {ex}", nameof(RegisterAsync), ex);
 
                 result.IsSuccessful = false;
             }
@@ -134,6 +133,5 @@ namespace MvcProject.Infrastructure.Identity
 
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }
-
     }
 }

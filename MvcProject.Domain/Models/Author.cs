@@ -10,6 +10,6 @@ namespace MvcProject.Domain.Models
     {
         public string Name { get; set; }
         public string LastName { get; set; }
-        public IList<Book> Books { get; set; }
+        public virtual IList<Book> Books { get; set; }
     }
 }

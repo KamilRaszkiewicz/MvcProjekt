@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcProject.Application.Dto;
 using MvcProject.Application.Dto.Book;
@@ -7,6 +8,7 @@ using MvcProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvcProject.API.Controllers
@@ -26,17 +28,32 @@ namespace MvcProject.API.Controllers
         /// <summary>
         /// Get book in full format by id
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetBook()
+        public ActionResult<GetBookFullResponse> GetBook(int id)
         {
-            return Ok("Book");
+            try
+            {
+                var book = _bookService.GetFullBookById(id);
+
+                if(book == null)
+                    return NotFound();
+
+                return Ok(book);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception thrown at {method}: {ex}", nameof(GetBooks), ex);
+                return BadRequest();
+            }
         }
 
 
         /// <summary>
         /// Get books in short format by search attribute (optional), with pagination (also optional)
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         [Route("")]
         public ActionResult<IEnumerable<GetBookShortResponse>> GetBooks(
@@ -44,13 +61,14 @@ namespace MvcProject.API.Controllers
             [FromQuery] PaginationRequest<BookSortAttribute> pagination
             )
         {
+            var userContext = UserContext;
             try
             {
-                return Ok(_bookService.GetShortBooks(req, pagination));
+                return Ok(_bookService.GetShortBooks(req, pagination, userContext.Id));
             } 
             catch(Exception e)
             {
-                _logger.LogError("Exception thrown at {0}: {1}", nameof(GetBooks), e);
+                _logger.LogError("Exception thrown at {method}: {e}", nameof(GetBooks), e);
 
                 return BadRequest();
             }
@@ -60,26 +78,50 @@ namespace MvcProject.API.Controllers
         /// <summary>
         /// Add book
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         [Route("")]
-        public IActionResult AddBook([FromBody] AddBookRequest dto)
+        public async Task<CreateBookResponse> AddBook([FromForm] AddBookRequest dto, CancellationToken ct)
         {
-            return Ok();
+            var res = await _bookService.CreateBookAsync(dto, ct);
+
+            if(res.Status != 0)
+            {
+                if (res.Status == -1)
+                    HttpContext.Response.StatusCode = 500;
+                else
+                    HttpContext.Response.StatusCode = 400;
+            }
+
+            return res;
         }
 
         /// <summary>
         /// Patch book by id
         /// </summary>
+        [AllowAnonymous]
         [HttpPatch]
-        [Route("{id}")]
-        public IActionResult PatchBook(int id, [FromBody] PatchBookRequest dto)
+        [Route("")]
+        public async Task<CreateBookResponse> PatchBook([FromForm] PatchBookRequest dto, CancellationToken ct)
         {
-            return Ok("Book");
+            var res =  await _bookService.PatchBookAsync(dto, ct);
+
+            if (res.Status != 0)
+            {
+                if (res.Status == -1)
+                    HttpContext.Response.StatusCode = 500;
+                else
+                    HttpContext.Response.StatusCode = 400;
+            }
+
+            return res;
         }
 
         /// <summary>
         /// Delete book by id
         /// </summary>
+
+        [AllowAnonymous]
         [HttpDelete]
         [Route("{id}")]
         public IActionResult DeleteBook()

@@ -1,25 +1,23 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using MvcProject.Application.Interfaces;
 using MvcProject.Infrastructure.Database;
 using MvcProject.Infrastructure.Extensions;
 using MvcProject.Infrastructure.Identity;
-using MvcProject.Infrastructure.Options;
-using System.IO;
 using System.Reflection;
 using System;
 using System.Text;
 using System.Text.Json.Serialization;
+using MvcProject.Application.Options;
+using MvcProject.Application.Extensions;
+using MvcProject.Infrastructure.Options;
+using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace MvcProject.API
 {
@@ -29,74 +27,64 @@ namespace MvcProject.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers()
                 .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opts =>
             {
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                opts.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                opts.IncludeXmlComments(System.IO.Path.Combine(AppContext.BaseDirectory, xmlFilename));
                 opts.UseInlineDefinitionsForEnums();
-            });
 
-            var jwtSecrets = builder.Configuration.GetSection("JwtOptions");
-
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                 options.UseSqlServer(builder.Configuration["ConnectionString"]));
-
-            builder.Services.AddOptions<PaginationOptions>();
-
-            builder.Services.AddAuthentication(options =>
+                opts.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
+                    Description = @"JWT Authorization header using the Bearer scheme. 
+                    Enter 'Bearer' [space] and then your token in the text input below.
+                    Example: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                opts.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    new OpenApiSecurityScheme
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSecrets["Issuer"],
-                        ValidAudience = jwtSecrets["Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecrets["Secret"]))
-                    };
-                })
-                .AddCookie();
-            builder.Services.AddCors();
-             
-            builder.Services.AddAuthorization();
+                    Reference = new OpenApiReference
+                        {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
 
-
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 1;
+                    },
+                    new List<string>()
+                    }
+                });
             });
 
-            builder.Services
-                .AddIdentity<ApplicationUser, IdentityRole<int>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddUserManager<UserManager<ApplicationUser>> ();
+            builder.Services.AddAuth(
+                builder.Configuration["ConnectionString"],
+                builder.Configuration.GetSection("JwtOptions"));
 
-            builder.Services.Configure<JwtOptions>(
-                builder.Configuration.GetSection("JwtOptions")
-                );
 
+            builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices();
+
+            builder.Services.Configure<FileOptions>(opts =>
+            {
+                opts.WebRootPath = builder.Environment.WebRootPath;
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -108,6 +96,7 @@ namespace MvcProject.API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseStaticFiles();
 
             app.MapControllers();
 
