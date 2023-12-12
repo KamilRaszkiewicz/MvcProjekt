@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MvcProject.Application.Results
+namespace MvcProject.Application.Dto
 {
-    public class SaveFileResult: BaseResult
+    public class SaveFileResponse : BaseResponse
     {
         public string Name { get; set; }
     }

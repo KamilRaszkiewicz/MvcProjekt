@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MvcProject.Application.Results
+namespace MvcProject.Application.Dto
 {
-    public class BaseResult
+    public class BaseResponse
     {
         public int Status { get; set; } // 0 is ok
 

@@ -1,4 +1,4 @@
-﻿using MvcProject.Application.Results;
+﻿using MvcProject.Application.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,8 @@ namespace MvcProject.Application.Interfaces
 {
     public interface IBasketService
     {
-        Task<BaseResult> AddToBasketAsync(int bookId, int usersId, CancellationToken ct);
+        Task<BaseResponse> AddToBasketAsync(int bookId, int usersId, CancellationToken ct);
+        BaseResponse GetBasket(int bookId, int usersId, CancellationToken ct);
+        Task<BaseResponse> AddToBasketAsync(int bookId, int usersId, CancellationToken ct);
     }
 }

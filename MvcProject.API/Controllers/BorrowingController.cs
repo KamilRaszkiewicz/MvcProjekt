@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcProject.Application.Dto;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
-using MvcProject.Application.Results;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -28,7 +28,7 @@ namespace MvcProject.API.Controllers
 
         [HttpPost("borrowBasket")]
         [Authorize(Roles = "VerifiedUser")]
-        public async Task<BaseResult> BorrowBasket(CancellationToken ct)
+        public async Task<BaseResponse> BorrowBasket(CancellationToken ct)
         {
             var res = await _borrowingService.BorrowBasketAsync((int)UserContext.Id!, ct);
 
@@ -45,7 +45,7 @@ namespace MvcProject.API.Controllers
 
         [HttpPost("returnBook")]
         [Authorize(Roles = "VerifiedUser")]
-        public async Task<BaseResult> ReturnBook([FromBody] List<int> bookIds, CancellationToken ct)
+        public async Task<BaseResponse> ReturnBook([FromBody] List<int> bookIds, CancellationToken ct)
         {
             var res = await _borrowingService.ReturnBooksAsync(bookIds, (int)UserContext.Id!, ct);
 

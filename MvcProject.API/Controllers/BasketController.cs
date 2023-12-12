@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcProject.Application.Dto;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
-using MvcProject.Application.Results;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -29,7 +29,7 @@ namespace MvcProject.API.Controllers
 
         [HttpPost("")]
         [Authorize(Roles = "VerifiedUser")]
-        public async Task<BaseResult> AddToBasket([FromBody] int Id, CancellationToken ct)
+        public async Task<BaseResponse> AddToBasket([FromBody] int Id, CancellationToken ct)
         {
             var res = await _basketService.AddToBasketAsync(Id, (int)UserContext.Id!, ct);
 
@@ -46,7 +46,7 @@ namespace MvcProject.API.Controllers
 
         [HttpGet("")]
         [Authorize(Roles = "VerifiedUser")]
-        public async Task<BaseResult> GetBasket(CancellationToken ct)
+        public async Task<BaseResponse> GetBasket(CancellationToken ct)
         {
             var res = await _basketService.AddToBasketAsync(Id, (int)UserContext.Id!, ct);
 

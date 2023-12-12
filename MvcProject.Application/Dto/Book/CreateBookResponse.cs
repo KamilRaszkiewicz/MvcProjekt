@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MvcProject.Application.Dto;
 
-namespace MvcProject.Application.Results
+namespace MvcProject.Application.Dto.Book
 {
-    public class CreateBookResult: BaseResult
+    public class CreateBookResponse : BaseResponse
     {
         public int BooksId { get; set; }
     }
