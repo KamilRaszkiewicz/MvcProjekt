@@ -82,8 +82,17 @@ namespace MvcProject.API
                 opts.WebRootPath = builder.Environment.WebRootPath;
             });
 
-            var app = builder.Build();
+            builder.Services.AddCors(options =>
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost" || new Uri(origin).Host == "127.0.0.1")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    })
+                );
 
+            var app = builder.Build();
+            app.UseCors();
 
             if (app.Environment.IsDevelopment())
             {
