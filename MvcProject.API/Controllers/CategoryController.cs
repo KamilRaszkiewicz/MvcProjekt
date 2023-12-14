@@ -34,7 +34,7 @@ namespace MvcProject.API.Controllers
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("getTree")]
+        [HttpGet("getTree")]
         public ActionResult<ICollection<CategoryTreeResponse>> GetTree()
         {
             ICollection<CategoryTreeResponse> tree;
