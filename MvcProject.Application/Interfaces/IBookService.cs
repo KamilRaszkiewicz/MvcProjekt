@@ -13,6 +13,7 @@ namespace MvcProject.Application.Interfaces
     public interface IBookService
     {
         IEnumerable<GetBookShortResponse> GetShortBooks(GetBooksRequest request, PaginationRequest<BookSortAttribute> pagination, int? usersId);
+        IEnumerable<GetBookShortResponse> GetNews(int count);
         GetBookFullResponse? GetFullBookById(int id);
 
         Task<CreateBookResponse> CreateBookAsync(AddBookRequest request, CancellationToken ct);

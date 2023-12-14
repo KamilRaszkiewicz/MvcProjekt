@@ -162,6 +162,35 @@ namespace MvcProject.Application.Services
 
         }
 
+        public IEnumerable<GetBookShortResponse> GetNews(int count)
+        {
+            var books = _bookRepository
+                .GetAll(x => x.Category, x => x.Authors)
+                .OrderByDescending(x => x.CreatedAt)
+                .Take(count);
+
+
+            return books.Select(x => new GetBookShortResponse
+            {
+                Id = x.Id,
+                Title = x.Title,
+                ShortDescription = x.DescriptionShort,
+                CoverUrl = "/img/" + x.CoverImageFileName,
+
+                Category = new BookInfoCategory
+                {
+                    Id = x.Category.Id,
+                    Name = x.Category.Name,
+                },
+
+                Authors = x.Authors.Select(a => new BookInfoAuthor
+                {
+                    Id = a.Id,
+                    DisplayName = a.Name + " " + a.LastName
+                })
+            });
+        }
+
         public IEnumerable<GetBookShortResponse> GetShortBooks(GetBooksRequest request, PaginationRequest<BookSortAttribute> pagination, int? usersId)
         {
             Expression<Func<Book, object>> sortBy = pagination.SortBy switch

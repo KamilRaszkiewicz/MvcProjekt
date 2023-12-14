@@ -79,6 +79,27 @@ namespace MvcProject.API.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("news")]
+        public ActionResult<IEnumerable<GetBookShortResponse>> GetNews([FromQuery]int? count)
+        {
+            try
+            {
+                return Ok(_bookService.GetNews(count ?? 20));
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Exception thrown at {method}: {e}", nameof(GetBooks), e);
+
+                return BadRequest();
+            }
+        }
+
 
         /// <summary>
         /// Add book. Employee role required
