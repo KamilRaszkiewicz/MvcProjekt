@@ -8,6 +8,7 @@ namespace MvcProject.Application.Dto
 {
     public class PaginationRequest<T>: PaginationBase where T: Enum
     {
+        public bool? SortAsc { get; set; }
         public T? SortBy { get; set; }
     }
 }

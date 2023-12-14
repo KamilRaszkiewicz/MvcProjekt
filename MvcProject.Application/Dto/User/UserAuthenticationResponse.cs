@@ -8,7 +8,7 @@ namespace MvcProject.Application.Dto.User
 {
     public class UserAuthenticationResponse
     {
-        public bool IsSuccessful { get; set; }
+        public bool IsSuccessful { get; set; } = true;
         public IEnumerable<string> Errors { get; set; }
         public string? Token { get; set; }
         public DateTime? ExpiresAt { get; set; }

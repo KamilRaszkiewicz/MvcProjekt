@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using MvcProject.Application.Dto.User;
 using MvcProject.Application.Interfaces;
 using MvcProject.Application.Options;
+using MvcProject.Domain.Enums;
 using MvcProject.Infrastructure.Identity;
 using System;
 using System.Data;
@@ -86,11 +87,22 @@ namespace MvcProject.Infrastructure.Services
                 var identityResult = await _userManager.CreateAsync(user, req.Password);
                 var expiryDate = DateTime.Now.AddSeconds(_jwtOptions.ValidForSeconds);
 
-                result.IsSuccessful = identityResult.Succeeded;
+                
 
-                if (!result.IsSuccessful)
+                if (!identityResult.Succeeded)
                 {
+                    result.IsSuccessful = identityResult.Succeeded;
                     result.Errors = identityResult.Errors.Select(x => x.Description);
+
+                    return result;
+                }
+
+                var addRoleResult = await _userManager.AddToRoleAsync(user, Enum.GetName<Roles>(Roles.User)!);
+
+                if (!addRoleResult.Succeeded)
+                {
+                    result.IsSuccessful = identityResult.Succeeded;
+                    result.Errors = addRoleResult.Errors.Select(x => x.Description);
 
                     return result;
                 }

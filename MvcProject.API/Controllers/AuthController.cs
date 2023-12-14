@@ -58,15 +58,5 @@ namespace MvcProject.API.Controllers
 
             return Ok( new { result.Token });
         }
-
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost("test")]
-        public async Task<IActionResult> Test()
-        {
-            var userContext = UserContext;
-
-            return Ok("hui");
-        }
     }
 }

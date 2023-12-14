@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace MvcProject.Domain.Enums
 {
-    public class UsersClaims
+    public enum Roles
     {
-        public const string IsVerified = "IsVerified";
+        User,
+        VerifiedUser,
+        Employee,
+        Admin,
     }
 }

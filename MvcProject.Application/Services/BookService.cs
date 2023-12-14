@@ -21,6 +21,7 @@ namespace MvcProject.Application.Services
         private readonly IRepository<Search> _searchRepository;
         private readonly IPaginationService _pagination;
         private readonly IFileService _fileService;
+        private readonly IBorrowForWishListService _borrowForWishListService;
         private readonly List<Expression<Func<Book, object>>> _sorts = new()
         {
             x => x.Title,
@@ -33,7 +34,9 @@ namespace MvcProject.Application.Services
             IRepository<Author> authorRepository,
             IRepository<Contents> contentsRepository,
             IRepository<Search> searchRepository,
-            IPaginationService pagination, IFileService fileService)
+            IFileService fileService,
+            IPaginationService pagination, 
+            IBorrowForWishListService borrowForWishListService)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
@@ -41,6 +44,7 @@ namespace MvcProject.Application.Services
             _searchRepository = searchRepository;
             _pagination = pagination;
             _fileService = fileService;
+            _borrowForWishListService = borrowForWishListService;
         }
 
         public async Task<CreateBookResponse> CreateBookAsync(AddBookRequest request, CancellationToken ct)
@@ -94,6 +98,26 @@ namespace MvcProject.Application.Services
             createResult.BooksId = book.Id;
 
             return createResult;
+        }
+
+        public async Task<BaseResponse> DeleteBooksAsync(List<int> booksIds, CancellationToken ct)
+        {
+            var response = new BaseResponse();
+
+            try
+            {
+                await _bookRepository.DeleteRangeAsync(ct,
+                    booksIds.Select(x => new Book
+                    {
+                        Id = x
+                    }).ToArray());
+            }
+            catch(Exception e)
+            {
+                response.Status = -1;   
+            }
+
+            return response;
         }
 
         public GetBookFullResponse? GetFullBookById(int id)
@@ -293,15 +317,23 @@ namespace MvcProject.Application.Services
             book.ISBN = request.ISBN ?? book.ISBN;
             book.DescriptionShort = request.DescriptionShort ?? book.DescriptionShort;
             book.DescriptionLong = request.DescriptionLong ?? book.DescriptionLong;
-            book.Quantity = request.Quantity ?? book.Quantity;
+            book.Quantity = book.Quantity;
             book.ISBN = request.ISBN ?? book.ISBN;
             book.CategoryId = request.CategoryId ?? book.CategoryId;
-
+            book.Quantity = (book.Quantity != 0 && request.Quantity != null) ? (int)request.Quantity : 0;
             book.Authors = authors ?? book.Authors;
             book.CoverImageFileName = saveFileResult?.Name ?? book.CoverImageFileName;
 
 
             await _bookRepository.UpdateAsync(book, ct);
+
+            if(book.Quantity == 0 && request.Quantity != null && request.Quantity != 0)
+            {
+                await _borrowForWishListService.BorrowForFirstUserOnWishlistAsync(new List<(Book book, int maxNrOfUsers)>
+                {
+                    (book, (int)request.Quantity)
+                }, ct);
+            }    
 
             result.BooksId = book.Id;
             return result;

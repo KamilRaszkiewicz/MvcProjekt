@@ -29,7 +29,7 @@ namespace MvcProject.API.Controllers
 
 
         /// <summary>
-        /// Adds book to basket
+        /// Adds book to basket. VerifiedUser role required.
         /// </summary>
         [HttpPost("")]
         [Authorize(Roles = "VerifiedUser")]
@@ -49,7 +49,7 @@ namespace MvcProject.API.Controllers
         }
 
         /// <summary>
-        /// Returns books from basket in short format
+        /// Gets books from basket in short format. VerifiedUser role required.
         /// </summary>
         [HttpGet("")]
         [Authorize(Roles = "VerifiedUser")]
@@ -59,7 +59,7 @@ namespace MvcProject.API.Controllers
         }
 
         /// <summary>
-        /// Removes list of items from basket. If list not passed, clears whole basket.
+        /// Removes list of items from basket. If list not passed, clears whole basket. VerifiedUser role required.
         /// </summary>
         [HttpDelete("")]
         [Authorize(Roles = "VerifiedUser")]

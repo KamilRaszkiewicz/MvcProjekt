@@ -17,5 +17,6 @@ namespace MvcProject.Application.Interfaces
 
         Task<CreateBookResponse> CreateBookAsync(AddBookRequest request, CancellationToken ct);
         Task<CreateBookResponse> PatchBookAsync(PatchBookRequest request, CancellationToken ct);
+        Task<BaseResponse> DeleteBooksAsync(List<int> booksIds, CancellationToken ct);
     }
 }

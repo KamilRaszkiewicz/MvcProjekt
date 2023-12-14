@@ -13,6 +13,9 @@ namespace MvcProject.Application.Extensions
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IBorrowingService, BorrowingService>();
             services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IBorrowForWishListService, BorrowForWishListService>();
+            services.AddScoped<IWishlistService, WishlistService>();
+            services.AddScoped<ISearchService, SearchService>();
             services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddOptions<JwtOptions>();

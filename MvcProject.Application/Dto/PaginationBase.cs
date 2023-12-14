@@ -8,7 +8,6 @@ namespace MvcProject.Application.Dto
 {
     public class PaginationBase
     {
-        public bool? SortAsc { get; set; }
         public int? Page { get; set; }
         public int? Size { get; set; }
     }

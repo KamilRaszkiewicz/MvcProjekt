@@ -11,6 +11,7 @@ namespace MvcProject.Infrastructure.Extensions
         {
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IRolesService, RolesService>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
     }

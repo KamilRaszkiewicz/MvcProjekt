@@ -7,6 +7,7 @@ using MvcProject.Application.Interfaces;
 using MvcProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,9 +52,10 @@ namespace MvcProject.API.Controllers
 
 
         /// <summary>
-        /// Get books in short format by search attribute (optional), with pagination (also optional)
+        /// Get books in short format by search attribute (optional), with pagination (also optional).
         /// </summary>
         [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         [Route("")]
         public ActionResult<IEnumerable<GetBookShortResponse>> GetBooks(
@@ -61,10 +63,9 @@ namespace MvcProject.API.Controllers
             [FromQuery] PaginationRequest<BookSortAttribute> pagination
             )
         {
-            var userContext = UserContext;
             try
             {
-                return Ok(_bookService.GetShortBooks(req, pagination, userContext.Id));
+                return Ok(_bookService.GetShortBooks(req, pagination, UserContext.Id));
             } 
             catch(Exception e)
             {
@@ -76,9 +77,9 @@ namespace MvcProject.API.Controllers
 
 
         /// <summary>
-        /// Add book
+        /// Add book. Employee role required
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = "Employee")]
         [HttpPost]
         [Route("")]
         public async Task<CreateBookResponse> AddBook([FromForm] AddBookRequest dto, CancellationToken ct)
@@ -97,9 +98,9 @@ namespace MvcProject.API.Controllers
         }
 
         /// <summary>
-        /// Patch book by id
+        /// Patch book by id. Employee role required
         /// </summary>
-        [AllowAnonymous]
+        [Authorize(Roles = "Employee")]
         [HttpPatch]
         [Route("")]
         public async Task<CreateBookResponse> PatchBook([FromForm] PatchBookRequest dto, CancellationToken ct)
@@ -118,15 +119,25 @@ namespace MvcProject.API.Controllers
         }
 
         /// <summary>
-        /// Delete book by id
+        /// Delete books by ids. Employee role required
         /// </summary>
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Employee")]
         [HttpDelete]
-        [Route("{id}")]
-        public IActionResult DeleteBook()
+        [Route("")]
+        public async Task<BaseResponse> DeleteBooksAsync([FromBody][Required] List<int> booksIds, CancellationToken ct)
         {
-            return Ok("Book");
+            var res = await _bookService.DeleteBooksAsync(booksIds, ct);
+
+            if (res.Status != 0)
+            {
+                if (res.Status == -1)
+                    HttpContext.Response.StatusCode = 500;
+                else
+                    HttpContext.Response.StatusCode = 400;
+            }
+
+            return res;
         }
 
 
