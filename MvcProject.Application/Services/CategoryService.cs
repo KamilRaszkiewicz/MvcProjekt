@@ -3,6 +3,7 @@ using MvcProject.Application.Helpers;
 using MvcProject.Application.Interfaces;
 using MvcProject.Domain.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MvcProject.Application.Services
 {
@@ -26,6 +27,21 @@ namespace MvcProject.Application.Services
                     Name = item?.Name,
                     Children = children,
                 }).Children;
+        }
+
+        public ICollection<int> GetDescendantCategoryIds(int categoryId)
+        {
+            var category = _repository
+                .GetAll(x => x.ParentCategory)
+                .ToTree(x => x.ParentCategory)
+                .First(x => x.Id == categoryId);
+
+            if(category == null)
+            {
+                return new List<int>();
+            }
+
+            return category.Flatten(x => x.Id).ToList();
         }
     }
 }

@@ -66,7 +66,11 @@ namespace MvcProject.API.Controllers
             try
             {
                 return Ok(_bookService.GetShortBooks(req, pagination, UserContext.Id));
-            } 
+            }
+            catch(ArgumentException e)
+            {
+                return BadRequest(e.Message);
+            }
             catch(Exception e)
             {
                 _logger.LogError("Exception thrown at {method}: {e}", nameof(GetBooks), e);

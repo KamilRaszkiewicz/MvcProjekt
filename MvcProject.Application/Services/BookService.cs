@@ -19,6 +19,7 @@ namespace MvcProject.Application.Services
         private readonly IRepository<Author> _authorRepository;
         private readonly IRepository<Contents> _contentsRepository;
         private readonly IRepository<Search> _searchRepository;
+        private readonly ICategoryService _categoryService;
         private readonly IPaginationService _pagination;
         private readonly IFileService _fileService;
         private readonly IBorrowForWishListService _borrowForWishListService;
@@ -34,6 +35,7 @@ namespace MvcProject.Application.Services
             IRepository<Author> authorRepository,
             IRepository<Contents> contentsRepository,
             IRepository<Search> searchRepository,
+            ICategoryService categoryService,
             IFileService fileService,
             IPaginationService pagination, 
             IBorrowForWishListService borrowForWishListService)
@@ -42,6 +44,7 @@ namespace MvcProject.Application.Services
             _authorRepository = authorRepository;
             _contentsRepository = contentsRepository;
             _searchRepository = searchRepository;
+            _categoryService = categoryService;
             _pagination = pagination;
             _fileService = fileService;
             _borrowForWishListService = borrowForWishListService;
@@ -172,6 +175,18 @@ namespace MvcProject.Application.Services
 
             var books = _bookRepository
                 .GetAll(x => x.Category, x => x.Authors);
+
+            if(request.CategoryId != null)
+            {
+                var categoryIds = _categoryService.GetDescendantCategoryIds((int)request.CategoryId);
+
+                if(!categoryIds.Any())
+                {
+                    throw new ArgumentException("Category does not exist");
+                }
+
+                books = books.Where(x => categoryIds.Contains(x.CategoryId));
+            }
 
 
             if (request.SearchBy is not null && request.Value is not null)

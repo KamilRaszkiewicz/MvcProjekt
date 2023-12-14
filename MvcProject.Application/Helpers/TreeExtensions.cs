@@ -21,7 +21,8 @@ namespace MvcProject.Application.Helpers
             bool IsRoot { get; }
             bool IsLeaf { get; }
 
-            IEnumerable<T> Flatten();
+            public IEnumerable<TResult> Flatten<TResult>(Func<T, TResult> selector);
+            ITree<T>? First(Func<T, bool> predicate);
             void Traverse(Action<T> action);
             IEnumerable<TResult> Traverse<TResult>(Func<T, TResult> func);
 
@@ -47,9 +48,42 @@ namespace MvcProject.Application.Helpers
 
             public bool IsLeaf => Children.Count > 0;
 
-            public IEnumerable<T> Flatten()
+            public ITree<T>? First(Func<T, bool> predicate)
             {
-                throw new NotImplementedException();
+                var queue = new Queue<ITree<T>>();
+
+                queue.Enqueue(this);
+
+                while (queue.Any())
+                {
+                    var current = queue.Dequeue();
+
+                    if (!current.IsRoot && predicate(current.Value))
+                        return current;
+
+                    foreach (var x in current.Children)
+                        queue.Enqueue(x);
+                }
+
+                return null;
+            }
+
+            public IEnumerable<TResult> Flatten<TResult>(Func<T, TResult> selector)
+            {
+                var queue = new Queue<ITree<T>>();
+
+                queue.Enqueue(this);
+
+                while (queue.Any())
+                {
+                    var current = queue.Dequeue();
+
+                    if (!current.IsRoot)
+                        yield return selector(current.Value);
+
+                    foreach (var x in current.Children)
+                        queue.Enqueue(x);
+                }
             }
 
             public TResult ToPoco<TResult>(Func<T, ICollection<TResult>, TResult> selector)

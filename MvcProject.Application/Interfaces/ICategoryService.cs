@@ -10,5 +10,6 @@ namespace MvcProject.Application.Interfaces
     public interface ICategoryService
     {
         ICollection<CategoryTreeResponse> GetCategoryTree();
+        ICollection<int> GetDescendantCategoryIds(int categoryId);
     }
 }
