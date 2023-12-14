@@ -16,6 +16,7 @@ namespace MvcProject.Application.Extensions
             services.AddScoped<IBorrowForWishListService, BorrowForWishListService>();
             services.AddScoped<IWishlistService, WishlistService>();
             services.AddScoped<ISearchService, SearchService>();
+            services.AddScoped<IAuthorService, AuthorService>();
             services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddOptions<JwtOptions>();

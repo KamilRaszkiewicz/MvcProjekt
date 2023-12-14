@@ -217,6 +217,18 @@ namespace MvcProject.Application.Services
                 books = books.Where(x => categoryIds.Contains(x.CategoryId));
             }
 
+            if (request.AuthorId != null)
+            {
+                var author = _authorRepository.GetAll().Where(x => x.Id == request.AuthorId).FirstOrDefault();
+
+                if (author == null)
+                {
+                    throw new ArgumentException("Author does not exist");
+                }
+
+                books = books.Where(x => x.Authors.Any(x => x.Id == author.Id));
+            }
+
 
             if (request.SearchBy is not null && request.Value is not null)
             {

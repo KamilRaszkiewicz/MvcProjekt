@@ -12,5 +12,6 @@ namespace MvcProject.Application.Dto.Book
         public BookSearchAttribute? SearchBy { get; set; }
         public string? Value { get; set; }
         public int? CategoryId { get; set; }
+        public int? AuthorId { get; set; }
     }
 }
