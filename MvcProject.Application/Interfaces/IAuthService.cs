@@ -1,4 +1,5 @@
-﻿using MvcProject.Application.Dto.User;
+﻿using MvcProject.Application.Dto;
+using MvcProject.Application.Dto.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace MvcProject.Application.Interfaces
     {
         Task<UserAuthenticationResponse> RegisterAsync(UserRegisterRequest req);
         Task<UserAuthenticationResponse> LoginAsync(UserLoginRequest req);
+        public List<GetUsersData> GetUsersData();
+        public Task<BaseResponse> VerifyUser(int usersId);
     }
 }

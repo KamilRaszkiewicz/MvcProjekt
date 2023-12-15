@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MvcProject.Application.Dto;
 using MvcProject.Domain.Models;
 using MvcProject.Infrastructure.Identity;
 using System;
@@ -18,7 +19,7 @@ namespace MvcProject.Infrastructure.Database
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
-      
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -71,6 +72,12 @@ namespace MvcProject.Infrastructure.Database
                 .HasMany(x => x.TableOfContents)
                 .WithOne()
                 .HasForeignKey(x => x.BooksId)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Entity<Search>()
+                .HasOne(x => (ApplicationUser)x.User)
+                .WithMany(x => x.Searches)
+                .HasForeignKey(x => x.UsersId)
                 .HasPrincipalKey(x => x.Id);
         }
     }

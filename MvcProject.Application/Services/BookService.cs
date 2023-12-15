@@ -256,7 +256,7 @@ namespace MvcProject.Application.Services
             {
                 _searchRepository.AddAsync(new Search
                 {
-                    ApplicationUserId = (int)usersId,
+                    UsersId = (int)usersId,
                     SearchAttribute = (BookSearchAttribute)request.SearchBy,
                     Query = (string)request.Value,
                     SearchedAt = DateTime.Now,

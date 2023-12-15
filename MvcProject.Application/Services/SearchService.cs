@@ -27,7 +27,7 @@ namespace MvcProject.Application.Services
         {
             var searches = _searchRepository
                 .GetAll()
-                .Where(x => x.ApplicationUserId == usersId);
+                .Where(x => x.UsersId == usersId);
 
             return _paginationService.GetPaginated(
                  searches,

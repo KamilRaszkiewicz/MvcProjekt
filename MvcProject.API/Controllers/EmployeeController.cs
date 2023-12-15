@@ -16,33 +16,47 @@ namespace MvcProject.API.Controllers
     [Route("api/employee")]
     public class EmployeeController : ApiController
     {
-        private readonly IBorrowingService _borrowingService;
+        private readonly IAuthService _authService;
 
         public EmployeeController(
-            IBorrowingService borrowingService
+            IAuthService authService
             )
         {
-            _borrowingService = borrowingService;
+            _authService = authService;
         }
 
         /// <summary>
-        /// Borrows all books from basket (if books are available)
+        /// Gets users data (roles, unreturned borrowings etc)
         /// </summary>
-        [HttpGet("GetUsers")]
-        [Authorize(Roles = "")]
-        public async Task<BaseResponse> GetUsersData(CancellationToken ct)
+        [HttpGet("getUsersData")]
+        [Authorize(Roles = "Employee")]
+        public List<GetUsersData> GetUsersData()
         {
-            var res = await _borrowingService.BorrowBasketAsync((int)UserContext.Id!, ct);
+            var res = _authService.GetUsersData();
 
-            if (res.Status != 0)
+            return res;
+        }
+
+
+        /// <summary>
+        /// Verifies user
+        /// </summary>
+        [HttpPost("verifyUser")]
+        [Authorize(Roles = "Employee")]
+        public async Task<BaseResponse> VerifyUser(int usersId)
+        {
+            var response = await _authService.VerifyUser(usersId);
+
+            if(response.Status != 0)
             {
-                if (res.Status == -1)
+                if (response.Status == -1)
                     HttpContext.Response.StatusCode = 500;
                 else
                     HttpContext.Response.StatusCode = 400;
             }
 
-            return res;
+
+            return response;
         }
 
     }
