@@ -236,7 +236,7 @@ namespace MvcProject.Application.Services
                 {
                     BookSearchAttribute.Title => x => x.Title.Contains((string)request.Value),
                     BookSearchAttribute.ISBN => x => x.ISBN == (string)request.Value,
-                    BookSearchAttribute.Author => x => x.Authors.Any(y => y.Id == int.Parse(request.Value)),
+                    BookSearchAttribute.Author => x => x.Authors.Any(y => (y.Name + " " + y.LastName).Contains(request.Value)),
 
                     _ => x => x.Title == (string)request.Value,
                 };
